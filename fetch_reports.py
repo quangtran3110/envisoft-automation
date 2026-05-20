@@ -259,9 +259,11 @@ def fetch_all_reports(username, password, days_to_fetch=14, headless=True):
             login_to_envisoft(page, username, password)
             setup_lookup_form(page)
             for well in wells:
-                safe_name = well["search_keyword"].replace("/", "_").replace(" ", "_")
+                # Dùng sheet_name (an toàn) thay vì search_keyword (có thể là regex
+                # chứa ký tự \, ?, ., +... — gây lỗi tên file trên Windows / artifact upload).
+                safe_name = well["sheet_name"].replace("/", "_").replace(" ", "_")
                 output_path = DOWNLOAD_DIR / (
-                    f"{safe_name}_{date_to.strftime('%Y%m%d')}.xlsx"
+                    f"MH{safe_name}_{date_to.strftime('%Y%m%d')}.xlsx"
                 )
                 try:
                     fetch_well_report(page, well, date_from, date_to, output_path)
