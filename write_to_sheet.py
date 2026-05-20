@@ -199,6 +199,16 @@ def process_excel_file(excel_path, sheet_name, gspread_client, sheet_id, target_
         worksheet.update(range_name=range_str, values=block,
                          value_input_option='USER_ENTERED')
 
+        # Áp number format "0.00" cho cả block — chỉ ảnh hưởng cách HIỂN THỊ.
+        # Giá trị thực (27.4432) vẫn được giữ đầy đủ → công thức vẫn chính xác.
+        # Cells hiển thị thành 27.44 thay vì 27.4432.
+        try:
+            worksheet.format(range_str, {
+                "numberFormat": {"type": "NUMBER", "pattern": "0.00"}
+            })
+        except Exception as e:
+            print(f"      (cảnh báo) không set được number format: {e}")
+
     print(f"      ✓ Sheet '{sheet_name}': +{added_count} ô, {len(duplicates)} ngày trùng")
 
     return {
