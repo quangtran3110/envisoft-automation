@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '0 1 * * 1'
   workflow_dispatch:
+    inputs:
+      days_to_fetch:
+        description: 'Số ngày lùi lại từ hôm qua (tối đa 30). Mặc định 14.'
+        required: false
+        default: '14'
+        type: string
 
 jobs:
   sync:
@@ -35,7 +41,7 @@ jobs:
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
           GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
           TARGET_YEAR: '2026'
-          DAYS_TO_FETCH: '7'
+          DAYS_TO_FETCH: ${{ github.event.inputs.days_to_fetch || '14' }}
         run: python main.py
 
       - name: Upload downloaded files (debug)
