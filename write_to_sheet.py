@@ -178,13 +178,26 @@ def process_excel_file(excel_path, sheet_name, gspread_client, sheet_id, target_
             duplicates.append(f"{day}/{month}")
             continue
 
-        block[row_index_q][col_index] = row_data[q_col]
-        block[row_index_h][col_index] = row_data[h_col]
+        # Convert sang float để Google Sheets nhận là NUMBER (không phải TEXT).
+        # Nếu giá trị không parse được (None, "", N/A...) thì để nguyên để fall qua.
+        def _to_num(v):
+            if v is None or v == "":
+                return ""
+            try:
+                return float(v)
+            except (ValueError, TypeError):
+                return v
+
+        block[row_index_q][col_index] = _to_num(row_data[q_col])
+        block[row_index_h][col_index] = _to_num(row_data[h_col])
         added_count += 1
 
     # 6. Ghi lại block 1 lần
+    # value_input_option='USER_ENTERED' = Google Sheets tự parse như khi gõ tay,
+    # nên float 43.8081 sẽ là NUMBER, không phải '43.8081 TEXT.
     if added_count > 0:
-        worksheet.update(range_name=range_str, values=block)
+        worksheet.update(range_name=range_str, values=block,
+                         value_input_option='USER_ENTERED')
 
     print(f"      ✓ Sheet '{sheet_name}': +{added_count} ô, {len(duplicates)} ngày trùng")
 
