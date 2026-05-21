@@ -15,7 +15,6 @@ from fetch_reports import fetch_all_reports
 from write_to_sheet import (
     get_google_sheet_client,
     process_excel_file,
-    log_to_sheet,
 )
 
 
@@ -88,12 +87,6 @@ def main():
                 target_year=target_year,
                 force=True,
             )
-
-            if result["status"] == "success":
-                log_to_sheet(
-                    gs_client, sheet_id,
-                    excel_path.name, sheet_name, result["added"],
-                )
 
             results.append({
                 "file": excel_path.name,
