@@ -2,7 +2,7 @@ name: Weekly Envisoft Data Sync
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '25 20 * * *'
   workflow_dispatch:
     inputs:
       days_to_fetch:
