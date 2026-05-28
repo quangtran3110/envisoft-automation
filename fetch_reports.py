@@ -23,6 +23,7 @@ Selectors xác nhận:
 
 import os
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
@@ -236,7 +237,10 @@ def fetch_all_reports(username, password, days_to_fetch=14, headless=True):
               f"({MAX_DAYS_PER_EXPORT}). Tự động cắt xuống {MAX_DAYS_PER_EXPORT}.")
         days_to_fetch = MAX_DAYS_PER_EXPORT
 
-    yesterday = datetime.now() - timedelta(days=1)
+    tz_vn = ZoneInfo("Asia/Ho_Chi_Minh")
+    now_vn = datetime.now(tz_vn)
+    # Tính toán ngày hôm qua dựa trên giờ VN
+    yesterday = now_vn - timedelta(days=1)
     date_to = yesterday
     date_from = yesterday - timedelta(days=days_to_fetch - 1)
     print(f"\nKhoảng thời gian: "
